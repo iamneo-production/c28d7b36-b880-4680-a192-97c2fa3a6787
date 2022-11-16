@@ -3,9 +3,9 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
-
 import { connect } from "react-redux";
 import { register } from "../actions/auth";
+import { clearMessage } from "../actions/message";
 
 const required = (value) => {
   if (!value) {
@@ -66,17 +66,22 @@ class Register extends Component {
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onChangeMobileNumber = this.onChangeMobileNumber.bind(this);
     this.onChangeRole = this.onChangeRole.bind(this);
-
+    props.dispatch(clearMessage());
+    //this.componentWillUnmount= this.componentWillUnmount.bind(this);
     this.state = {
       username: "",
       email: "",
       password: "",
       mobileNumber: "",
       role: "",
-      roles: [],
+      roles: ["user"],
       successful: false,
     };
   }
+
+  // componentWillUnmount(){
+  //   props.dispatch(clearMessage());
+  // }
 
   onChangeUsername(e) {
     this.setState({

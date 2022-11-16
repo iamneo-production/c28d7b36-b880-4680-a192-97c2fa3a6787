@@ -7,6 +7,7 @@ import CheckButton from "react-validation/build/button";
 
 import { connect } from "react-redux";
 import { login } from "../actions/auth";
+import { clearMessage } from "../actions/message";
 
 const required = (value) => {
   if (!value) {
@@ -24,13 +25,16 @@ class Login extends Component {
     this.handleLogin = this.handleLogin.bind(this);
     this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
-
+    props.dispatch(clearMessage());
+    //this.props.message="";
+    //console.log(this.props);
     this.state = {
       username: "",
       password: "",
       loading: false,
     };
   }
+
 
   onChangeUsername(e) {
     this.setState({
@@ -46,7 +50,7 @@ class Login extends Component {
 
   handleLogin(e) {
     e.preventDefault();
-
+    //dispatch(clearMessage());
     this.setState({
       loading: true,
     });
@@ -59,7 +63,7 @@ class Login extends Component {
       dispatch(login(this.state.username, this.state.password))
         .then(() => {
           history.push("/profile");
-          console.log("yeah");
+          //console.log("yeah");
           window.location.reload();
         })
         .catch(() => {
@@ -76,7 +80,6 @@ class Login extends Component {
 
   render() {
     const { isLoggedIn, message } = this.props;
-
     if (isLoggedIn) {
       return <Navigate to="/profile" />;
     }

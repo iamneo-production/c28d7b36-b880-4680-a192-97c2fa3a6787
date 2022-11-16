@@ -10,7 +10,7 @@ class AuthService {
         //console.log(response.data);
         if (response.data.accessToken) {
           //console.log(response.data.accessToken);local
-          Storage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("user", JSON.stringify(response.data));
         }
 
         return response.data;

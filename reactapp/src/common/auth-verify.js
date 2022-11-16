@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { history } from '../helpers/history';
+import React, { useEffect } from "react";
+import { comRouter } from "./common-router";
 
 const parseJwt = (token) => {
   try {
@@ -9,26 +9,58 @@ const parseJwt = (token) => {
   }
 };
 
-class AuthVerify extends Component {
-  constructor(props) {
-    super(props);
+const AuthVerify = (props) => {
+  let location = props.router.location;
 
-    history.listen(() => {
-      const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
 
-      if (user) {
-        const decodedJwt = parseJwt(user.accessToken);
-
-        if (decodedJwt.exp * 1000 < Date.now()) {
-          props.logOut();
-        }
+    if (user) {
+      const decodedJwt = parseJwt(user.accessToken);
+      // console.log(Date.now());
+      // console.log(decodedJwt.exp*1000);
+      if (decodedJwt.exp * 1000 < Date.now()) {
+        props.logOut();
       }
-    });
-  }
+    }
+  }, [location]);
 
-  render() {
-    return <div></div>;
-  }
-}
+  return <div></div>;
+};
 
-export default AuthVerify;
+export default comRouter(AuthVerify);
+
+// import React, { Component } from "react";
+// import { history } from '../helpers/history';
+
+// const parseJwt = (token) => {
+//   try {
+//     return JSON.parse(atob(token.split('.')[1]));
+//   } catch (e) {
+//     return null;
+//   }
+// };
+
+// class AuthVerify extends Component {
+//   constructor(props) {
+//     super(props);
+
+//     history.listen(() => {
+//       const user = JSON.parse(localStorage.getItem("user"));
+
+//       if (user) {
+//         const decodedJwt = parseJwt(user.accessToken);
+
+//         if (decodedJwt.exp * 1000 < Date.now()) {
+//           props.logOut();
+//         }
+//       }
+//     });
+//   }
+
+//   render() {
+//     return <div></div>;
+//   }
+// }
+
+// export default AuthVerify;

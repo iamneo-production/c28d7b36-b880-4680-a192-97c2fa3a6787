@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
 import Item from '@material-ui/core/Grid';
-import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth-header";
 import {withRouter} from "../withRouter"
+import ApplicationService from "../services/application.service"
 
 class Application extends Component {
+    constructor(props){
+        super(props);
+        this.state={
+            id: '',
+        }
+    }
+
     componentDidMount() {
-        //console.log(authHeader());
-        axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/auth/id`, { headers: authHeader() })
-          .then(res => {
-            console.log(res.data);
-            //this.setState({ user:{id: 'res.data'} });
-            //fields.setState({ user:'res.data' });
-          })
-          .catch((err) => {
-              console.log('error');
+        ApplicationService.getUserId().then((res) => {
+            this.setState({
+              id: res.data,
+            });
           });
       }
 
@@ -78,7 +79,9 @@ class Application extends Component {
                         .max(10, 'Must be exactly 10 digits'),
                     aadharNumber: Yup.string()
                         .required('Aadhar Number is required')
-                        .matches(/^[0-9]+$/, "Must be only digits"),
+                        .matches(/^[0-9]+$/, "Must be only digits")
+                        .min(12, 'Must be exactly 12 digits')
+                        .max(12, 'Must be exactly 12 digits'),
                     houseNo: Yup.string()
                         .required('House No. is required')
                         .matches(/^[0-9]+$/, "Must be only digits"),
@@ -97,48 +100,37 @@ class Application extends Component {
                 })}
                 //validator={() => ({})}
                 onSubmit={fields => {
-                    axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/auth/id`, { headers: authHeader() })
-                    .then(res => {
-                        console.log(res.data);
+                        // const res = ApplicationService.getUserId();
+                        // console.log(res);
                         //this.setState({ user:{ id:'abc'} });
                         //fields.setState({ user:'res.data' });
-                        console.log('SUCCESS!! :-)\n\n' + JSON.stringify({...fields, status:'IN PROGRESS', user:{id:res.data}}, null, 4))
+                        //console.log('SUCCESS!! :-)\n\n' + JSON.stringify({...fields, status:'IN PROGRESS', user:{id:res.data}}, null, 4))
                         const [firstName, lastName, email, gender, fatherName, phoneNumber1, phoneNumber2, aadharNumber] = [fields.firstName, fields.lastName, fields.email, fields.gender, fields.fatherName, fields.phoneNumber1, fields.phoneNumber2, fields.aadharNumber];
                         //console.log(firstName);
                         //const firstName = fields.firstName;
                         
-                        console.log(fields.firstName);
-                        console.log(email);
-                        const appData = {firstName, lastName, email, gender, fatherName, phoneNumber1, phoneNumber2, aadharNumber, status:'IN PROGRESS', user:{id:res.data}};
+                        //console.log(fields.firstName);
+                        //console.log(email);
+                        const appData = {firstName, lastName, email, gender, fatherName, phoneNumber1, phoneNumber2, aadharNumber, status:'IN PROGRESS', user:{id:this.state.id}};
                         
-                        console.log(appData);
-                         const result = axios.post('https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/apply', appData, {
-                                                         headers: authHeader()
-                                                            
-                         });
+                        //console.log(appData);
+                         const result = ApplicationService.apply(appData);
                          const [houseNo, streetName, areaName, city, state, pincode] = [fields.houseNo, fields.streetName, fields.areaName, fields.city, fields.state, fields.pincode];
                          var addrData;
-                         const printResult = async () => {
+                         const getAddr = async () => {
                             const a = await result;
                             localStorage.setItem("application", JSON.stringify(a.data));
-                            console.log(a.data);
+                            //console.log(a.data);
                             addrData = {houseNo, streetName, areaName, city, state, pincode, type: 1,application:{id:a.data}};
-                            console.log(addrData);
-                            const addrResult = await axios.post('https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/address/apply', addrData, {
-                                                         headers: authHeader()
-                                                            
-                         });
+                            //console.log(addrData);
+                            const addrResult = await ApplicationService.addrApply(addrData);
                             //return(a.data);
                           };
-                        printResult();
+                        getAddr();
                         //console.log(appId);
-                        console.log(addrData)
-                    })
-                    .catch((err) => {
-                        console.log('error');
-                    });
+                        //console.log(addrData)
                     
-                    console.log("yes");
+                    //console.log("yes");
                     this.props.navigate("/upload");
                     //history.push("/upload");
                     //window.location.replace('/upload'); 

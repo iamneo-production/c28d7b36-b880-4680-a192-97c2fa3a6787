@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Grid from '@material-ui/core/Grid';
-import Item from '@material-ui/core/Grid';
 import Typography from '@mui/material/Typography';
-import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth-header";
-import axios from 'axios';
 import { useNavigate, Link } from "react-router-dom";
 import { CardActionArea } from '@mui/material';
+import Spinner from 'react-bootstrap/Spinner';
 
 
 const AdminApplicationCard = (props) => {
@@ -40,35 +36,16 @@ const AdminApplicationCard = (props) => {
     bgcolor: 'green',
   };
 
-  
-  //   axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/address/list/app/?appId=${application.id}`, { headers: authHeader() })
-  //               .then(res => {
-  //                   //console.log(res.data);
-  //                   // this.updateState = () => this.setState({
-  //                   //     address: ({houseNo : res.data.houseNo})
-  //                   // });
-  //                   setAddress({
-  //                     houseNo:res.data.houseNo,
-  //                   });
-                    
-  //               })
-  //               .catch((err) => {
-  //                   console.log('error');
-  //               });
-  
-  // let addressElement;
-  //console.log(address);
-  // const address = this.state.address;
-  // if(this.state.address){
-  //   console.log(address)
-  // }
-  // if(!address){
-  //   addressElement = "empty";
-  // }else{
-  //   addressElement = this.state.address.houseNo + " " + this.state.address.streetName;
-  // }
-
-
+  if(!application.id){
+    return (
+      <div class="d-flex align-items-center" style={{padding: "250px 550px"}}>
+      <Spinner animation="grow" role="status" variant="secondary" style={{ width: "10rem", height: "10rem" }}>
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+      </div>
+    );
+  }
+  else{
   return (
     <div className="card-container" style={{ padding: 15 }}>
       <Grid container spacing={10} justifyContent="center">
@@ -78,7 +55,7 @@ const AdminApplicationCard = (props) => {
           <CardActionArea>
                 <CardContent>
                   <Typography sx={{ fontSize: 17 }} gutterBottom>
-                    Applicant Name: {application.firstName} {application.lastName} &emsp; Applicant Phone No: {application.phoneNumber1}
+                    Applicant Name: {application.firstName} {application.lastName} &emsp; &emsp;Applicant Phone No: {application.phoneNumber1}
                     
                   </Typography>
                   <Typography sx={{ fontSize: 17 }} gutterBottom>
@@ -91,9 +68,7 @@ const AdminApplicationCard = (props) => {
                   </Typography>
                   <span>
                   <Typography sx={statusStyle} style={{ padding: 5 }} display="inline">
-                    
-                    {application.status} 
-                   
+                    {application.status}
                   </Typography>
                   </span>
                 </CardContent>
@@ -104,6 +79,7 @@ const AdminApplicationCard = (props) => {
       </Grid>
     </div>
   );
+  }
 };
 
 export default AdminApplicationCard;

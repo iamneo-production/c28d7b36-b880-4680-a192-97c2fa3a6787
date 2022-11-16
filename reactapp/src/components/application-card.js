@@ -6,8 +6,7 @@ import Button from '@mui/material/Button';
 import Grid from '@material-ui/core/Grid';
 import Item from '@material-ui/core/Grid';
 import Typography from '@mui/material/Typography';
-import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth-header";
-import axios from 'axios';
+import Spinner from 'react-bootstrap/Spinner';
 
 const ApplicationCard = (props) => {
   const application = props.application;
@@ -35,35 +34,16 @@ const ApplicationCard = (props) => {
     bgcolor: 'green',
   };
 
-  
-  //   axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/address/list/app/?appId=${application.id}`, { headers: authHeader() })
-  //               .then(res => {
-  //                   //console.log(res.data);
-  //                   // this.updateState = () => this.setState({
-  //                   //     address: ({houseNo : res.data.houseNo})
-  //                   // });
-  //                   setAddress({
-  //                     houseNo:res.data.houseNo,
-  //                   });
-                    
-  //               })
-  //               .catch((err) => {
-  //                   console.log('error');
-  //               });
-  
-  // let addressElement;
-  //console.log(address);
-  // const address = this.state.address;
-  // if(this.state.address){
-  //   console.log(address)
-  // }
-  // if(!address){
-  //   addressElement = "empty";
-  // }else{
-  //   addressElement = this.state.address.houseNo + " " + this.state.address.streetName;
-  // }
-
-
+  if(!application.id){
+    return (
+      <div class="d-flex align-items-center" style={{padding: "250px 550px"}}>
+      <Spinner animation="grow" role="status" variant="secondary" style={{ width: "10rem", height: "10rem" }}>
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+      </div>
+    );
+  }
+  else{
   return (
     <div className="card-container" style={{ padding: 15 }}>
       <Grid container spacing={10} justifyContent="center">
@@ -71,7 +51,7 @@ const ApplicationCard = (props) => {
       <Card sx={{ minWidth: 275 }} style={{flex:1, backgroundColor:'lightgray'}}>
                 <CardContent>
                   <Typography sx={{ fontSize: 17 }} gutterBottom>
-                    Applicant Name: {application.firstName} {application.lastName} &emsp; Applicant Phone No: {application.phoneNumber1}
+                    Applicant Name: {application.firstName} {application.lastName} &emsp; &emsp; Applicant Phone No: {application.phoneNumber1}
                     
                   </Typography>
                   <Typography sx={{ fontSize: 17 }} gutterBottom>
@@ -95,6 +75,7 @@ const ApplicationCard = (props) => {
       </Grid>
     </div>
   );
+  }
 };
 
 export default ApplicationCard;

@@ -1,17 +1,7 @@
 import React, { Component } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
-import Grid from '@material-ui/core/Grid';
-import Item from '@material-ui/core/Grid';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth-header";
 import ApplicationCard from "./application-card"
-import { Navigate } from 'react-router-dom';
+import ApplicationService from "../services/application.service"
+import Spinner from 'react-bootstrap/Spinner';
 
 class UserListApplication extends Component {
 
@@ -19,52 +9,68 @@ class UserListApplication extends Component {
         super(props);
         this.state={
             applications: [],
+            id: '',
+            message: "",
+            flag: false,
         }
     }
     componentDidMount(){
-        axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/auth/id`, { headers: authHeader() })
-          .then(res => {
-            console.log(res.data);
-            axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/list/user/?userId=${res.data}`, { headers: authHeader() })
-            .then(res => {
-                console.log(res.data[0]);
+        ApplicationService.getUserId().then((res) => {
+            this.setState({
+              id: res.data,
+            });
+            ApplicationService.listByUserId(this.state.id).then((res) => {
                 this.setState({
-                    applications: res.data,
+                  applications: res.data,
+                  flag: true,
                 });
-            })
-          .catch((err) => {
-              console.log('error');
-          });
-          })
-          .catch((err) => {
-              console.log('error');
-          })
-
-            
+              })
+              .catch(() => {
+                this.setState({
+                  message: "No Applications for this User",
+                  flag: false,
+                });
+              });
+          });    
     }
         render(){
-            // const { isLoggedIn, message } = this.props;
-            // console.log(isLoggedIn);
-            // if (!isLoggedIn) {
-            //     return <Navigate to="/login" />;
-            // }
             let applicationElement;
             const applications = this.state.applications;
+            const flag = this.state.flag;
+            const message = this.state.message;
             if(this.state.applications[0]){
-                console.log(applications[0]);
+                //console.log(applications[0]);
             if(!applications){
                 applicationElement = "empty";
             } else{
                 applicationElement = applications.map((application, k) => <ApplicationCard application={application} key={k} />);
             }
             }
-
-            return(
-                <div>
-                    {applicationElement}
-                </div>
-            );
-        
+            if(!flag){
+                return(
+                    <div className="alert alert-light" role="alert">
+                        {message}
+                    </div>
+                )
+            }
+            else{
+                if(!applicationElement){
+                        return (
+                        <div class="d-flex align-items-center" style={{padding: "250px 550px"}}>
+                        <Spinner animation="grow" role="status" variant="secondary" style={{ width: "10rem", height: "10rem" }}>
+                            <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                        </div>
+                        );
+                }
+                else{
+                return(
+                    <div>
+                        {applicationElement}
+                    </div>
+                );
+                }
+            }
         }
 }
 

@@ -1,17 +1,7 @@
 import React, { Component } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
-import Grid from '@material-ui/core/Grid';
-import Item from '@material-ui/core/Grid';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth-header";
 import AdminApplicationCard from "./admin-application-card"
-import { Navigate } from 'react-router-dom';
+import ApplicationService from "../services/application.service"
+import Spinner from 'react-bootstrap/Spinner';
 
 export default class AdminListApplication extends Component {
 
@@ -23,36 +13,29 @@ export default class AdminListApplication extends Component {
         }
     }
     componentDidMount(){
-        axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/auth/id`, { headers: authHeader() })
-          .then(res => {
-            console.log(res.data);
-            axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/list`, { headers: authHeader() })
-            .then(res => {
-                console.log(res.data[0]);
-                this.setState({
-                    applications: res.data,
-                });
-                
-            })
-          .catch((err) => {
-              console.log('error');
+        ApplicationService.listApplications().then((res) => {
+            this.setState({
+              applications: res.data,
+            });
           });
-          })
-          .catch((err) => {
-              console.log('error');
-          })
-
             
     }
         render(){
             let applicationElement;
+            let applicationList = [];
+            let j=0;
             const applications = this.state.applications;
             if(this.state.applications[0]){
-                console.log(applications[0]);
+                //console.log(applications[0]);
+                for(let i=0;i < applications.length;i++){
+                    if(applications[i].status != "REJECTED"){
+                        applicationList[j++] = applications[i];
+                    }
+                }
             if(!applications){
                 applicationElement = "empty";
             } else{
-                applicationElement = applications.map((application, k) => <AdminApplicationCard application={application} key={k} />);
+                applicationElement = applicationList.map((application, k) => <AdminApplicationCard application={application} key={k} />);
             }
             }
             // if(!applications){
@@ -60,27 +43,21 @@ export default class AdminListApplication extends Component {
             // } else{
             //     applicationElement = applications[0];
             // }
+            if(!applicationElement){
+                return (
+                  <div class="d-flex align-items-center" style={{padding: "250px 550px"}}>
+                  <Spinner animation="grow" role="status" variant="secondary" style={{ width: "10rem", height: "10rem" }}>
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                  </div>
+                );
+            }
+            else{
             return(
                 <div>
                     {applicationElement}
                 </div>
             );
-        //     axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/auth/id`, { headers: authHeader() })
-        //   .then(res => {
-        //     console.log(res.data);
-        //     axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/list/${res.data}`, { headers: authHeader() })
-        //     .then(res => {
-        //         console.log(res.data);
-
-        //     })
-        //   .catch((err) => {
-        //       console.log('error');
-        //   });
-        //   })
-        //   .catch((err) => {
-        //       console.log('error');
-        //   })
-
-        //     )
+            }
         }
 }

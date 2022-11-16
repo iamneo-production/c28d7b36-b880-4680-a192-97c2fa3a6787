@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-import { Navigate } from 'react-router-dom';
-import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
-import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth-header";
-import axios from 'axios';
 import VerificationCard from "./verification-card"
-
+import ApplicationService from "../services/application.service"
+import FileService from "../services/file.service"
 function withParams(Component) {
   return props => <Component {...props} params={useParams()} />;
 }
@@ -36,15 +33,16 @@ class Verification extends Component {
         streetName: "",
         type: "",
       },
+      picture: "",
+      picdata: "",
     }
   }
   
   componentDidMount(){
     let { id } = this.props.params;
-    console.log(id);
-    axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/fetch/?id=${id}`, { headers: authHeader() })
-            .then(res => {
-                console.log(res.data);
+    //console.log(id);
+    ApplicationService.fetchById(id).then(res => {
+                //console.log(res.data);
                 this.setState({
                     application: {
                       aadharNumber: res.data.aadharNumber,
@@ -58,10 +56,9 @@ class Verification extends Component {
                       status: res.data.status,
                     }
                 });
-                console.log(this.state.application.id);
-                axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/address/list/app/?appId=${this.state.application.id}`, { headers: authHeader() })
-                .then(res => {
-                    console.log(res.data);
+      
+                ApplicationService.fetchAddressByApplicationId(this.state.application.id).then(res => {
+                    //console.log(res.data);
                     this.setState({
                       address:{
                         areaName: res.data.areaName,
@@ -80,6 +77,24 @@ class Verification extends Component {
                 .catch((err) => {
                     console.log('error');
                 });
+                
+                FileService.getImageUrl(this.state.application.id).then(res => {
+                  this.setState({
+                    picture: res.data.url,
+                  })
+                  FileService.getImageString(this.state.picture).then(response => {
+                    this.setState({
+                      picdata: `data:image/jpeg;base64,${new Buffer(response.data, "binary").toString("base64")}`,
+                    })
+                    //console.log(this.picdata);
+                  })
+                  .catch((err) => {
+                    console.log('error');
+                  });
+                })
+                .catch((err) => {
+                  console.log('error');
+                });
   
                 
             })
@@ -89,22 +104,7 @@ class Verification extends Component {
   }
   render() {
     let verificationElement = "empty";
-  //   const application = this.state.application;
-  //   const address = this.state.address;
-  //   console.log(this.state.application);
-  //   if(this.state.address){
-  //       console.log(application);
-  //       console.log(address);
-    
-  //   if(!application || !address){
-  //       verificationElement = "empty";
-  //       console.log("empty");
-  //   } else{
-  //       console.log("oi");
-  //       verificationElement = <VerificationCard application={this.state.application} address={this.state.address}/>;
-  //   }
-  // }
-  verificationElement = <VerificationCard application={this.state.application} address={this.state.address}/>;
+  verificationElement = <VerificationCard application={this.state.application} address={this.state.address} picture={this.state.picdata}/>;
 
     return (
       <div>
