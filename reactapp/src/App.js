@@ -9,17 +9,16 @@ import Login from "./components/login.component";
 import Register from "./components/register.component";
 import Home from "./components/home.component";
 import Profile from "./components/profile.component";
-import BoardUser from "./components/board-user.component";
-import BoardModerator from "./components/board-moderator.component";
 import BoardAdmin from "./components/board-admin.component";
 import Application from "./components/application.component";
 import UserListApplication from "./components/user-list-application.component";
 import AdminListApplication from "./components/admin-list-application.component";
 import Verification from "./components/verification.component";
+import PDFReader from "./components/PDFReader"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminRoute from "./components/AdminRoute"
+import UserRoute from "./components/UserRoute"
 import UploadFiles from "./components/upload-files.component"
-
 import { logout } from "./actions/auth";
 import { clearMessage } from "./actions/message";
 
@@ -32,13 +31,13 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.logOut = this.logOut.bind(this);
-    console.log(props);
+    //console.log(props);
     this.state = {
       showAdminBoard: false,
       currentUser: undefined,
     };
-
     history.listen((location) => {
+      console.log("change");
       props.dispatch(clearMessage()); // clear message when changing location
     });
   }
@@ -46,7 +45,7 @@ class App extends Component {
   componentDidMount() {
     //const user = JSON.parse(localStorage.getItem("user"));
     const user = this.props.user;
-    console.log(user);
+    //console.log(user);
     if (user) {
       this.setState({
         currentUser: user,
@@ -74,12 +73,14 @@ class App extends Component {
 
 
   render() {
-    const {currentUser, showAdminBoard } = this.state;
-    console.log(this.props.user);
+    //console.log(this.props.user);
     let admin = false;
+    let user = false;
     if(this.props.user){
       if(this.props.user.roles[0] == "ROLE_ADMIN")
         admin = true;
+      else
+        user = true;
     }
     //console.log(showAdminBoard);
     // if(currentUser){
@@ -97,52 +98,37 @@ class App extends Component {
             </Link>
             <div className="navbar-nav mr-auto">
               <li className="nav-item">
-                <Link to={"/home"} className="nav-link">
+                <Link to={"/profile"} className="nav-link">
                   Home
                 </Link>
               </li>
-
-              { this.props.user && (
-                <li className="nav-item">
-                  <Link to={"/userlist"} className="nav-link">
-                    Track
-                  </Link>
-                </li>
-              )}
               { admin && (
                 <li className="nav-item">
                   <Link to={"/adminlist"} className="nav-link">
-                    Admin
+                    Verification
                   </Link>
                 </li>
+              )}
+              { user && (
+                <div className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                    <Link to={"/apply"} className="nav-link">
+                      Apply
+                    </Link>
+                  </li>                
+                  <li className="nav-item">
+                    <Link to={"/userlist"} className="nav-link">
+                      Track
+                    </Link>
+                  </li>
+                </div>
               )}
 
-              {this.props.user && (
-                <li className="nav-item">
-                  <Link to={"/user"} className="nav-link">
-                    User
-                  </Link>
-                </li>
-              )}
             </div>
 
             {this.props.user ? (
               <div className="navbar-nav ml-auto">
-                <li className="nav-item">
-                  <Link to={"/profile"} className="nav-link">
-                    {this.props.user.username}
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={"/apply"} className="nav-link">
-                    Apply
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={"/upload"} className="nav-link">
-                    Upload
-                  </Link>
-                </li>
+                
                 <li className="nav-item">
                   <a href="/login" className="nav-link" onClick={this.logOut}>
                     LogOut
@@ -171,22 +157,26 @@ class App extends Component {
               <Route exact path="/home" element={<Home />} />
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/register" element={<Register />} />
+              <Route exact path="/profile" element={<Profile />} />
               <Route element={<ProtectedRoute/>}>
-                <Route exact path="/profile" element={<Profile />} />
-                <Route exact path="/apply" element={<Application />} />
+                                
                 <Route exact path="/userlist" element={<UserListApplication />} />
-                <Route path="/user" element={<BoardUser />} />
-                <Route exact path="/upload" element={<UploadFiles />} />
+                <Route path="/user" element={<Profile />} />                
               </Route>
               <Route element={<AdminRoute/>}>
                 <Route exact path="/adminlist" element={<AdminListApplication />} />
                 <Route path="/admin" element={<BoardAdmin />} />
                 <Route exact path="/verification/:id" element={<Verification />} />
+                <Route exact path="/document/:id" element={<PDFReader />} />
+              </Route>
+              <Route element={<UserRoute/>}>
+                <Route exact path="/apply" element={<Application />} />
+                <Route exact path="/upload" element={<UploadFiles />} />
               </Route>
             </Routes>
           </div>
 
-          {/* { <AuthVerify logOut={this.logOut}/> } */}
+          { <AuthVerify logOut={this.logOut}/> }
         </div>
       </BrowserRouter>
     );
