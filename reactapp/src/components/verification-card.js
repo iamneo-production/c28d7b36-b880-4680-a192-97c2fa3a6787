@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { useNavigate, Link } from "react-router-dom";
 import CardMedia from '@mui/material/CardMedia';
 import ApplicationService from "../services/application.service"
+import EmailService from "../services/email.service"
 import Spinner from 'react-bootstrap/Spinner';
 
 const VerificationCard = (props) => {
@@ -39,6 +40,13 @@ const VerificationCard = (props) => {
   //console.log(authHeader().Authorization);
   const rejectStatus = () => {
     ApplicationService.updateStatus(application.id, "REJECTED").then((res) => {
+      EmailService.sendRejectedMail(application.email, application.firstName, application.lastName, application.id)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((response) =>{
+        console.log(response);
+      });
       navigate("/adminlist",{state:{refresh:true}});
     });
 
@@ -47,6 +55,13 @@ const VerificationCard = (props) => {
 
   const acceptStatus = () => {
     ApplicationService.updateStatus(application.id, "ACCEPTED").then((res) => {
+      EmailService.sendAcceptedMail(application.email, application.firstName, application.lastName, application.id)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((response) =>{
+        console.log(response);
+      });
       navigate("/adminlist",{state:{refresh:true}});
     });
   }

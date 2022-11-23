@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/auth/";
 
@@ -19,6 +20,7 @@ class AuthService {
 
   logout() {
     localStorage.removeItem("user");
+    window.location.reload();
   }
 
   register(username, email, password, mobileNumber, role) {

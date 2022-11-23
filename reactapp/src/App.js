@@ -159,8 +159,6 @@ class App extends Component {
               <Route exact path="/register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route element={<ProtectedRoute/>}>
-                                
-                <Route exact path="/userlist" element={<UserListApplication />} />
                 <Route path="/user" element={<Profile />} />                
               </Route>
               <Route element={<AdminRoute/>}>
@@ -172,6 +170,7 @@ class App extends Component {
               <Route element={<UserRoute/>}>
                 <Route exact path="/apply" element={<Application />} />
                 <Route exact path="/upload" element={<UploadFiles />} />
+                <Route exact path="/userlist" element={<UserListApplication />} />
               </Route>
             </Routes>
           </div>

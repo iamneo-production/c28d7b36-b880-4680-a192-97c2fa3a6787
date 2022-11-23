@@ -3,7 +3,7 @@ import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth
 
 class FileService{
     getImageUrl(id){
-        return axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/file/list/app/img/?id=${id}`, { headers: authHeader() });
+        return axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/file/list/app/img/${id}`, { headers: authHeader() });
                  
     }
 
@@ -12,7 +12,7 @@ class FileService{
     }
 
     getPDFUrl(id){
-        return axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/file/list/app/pdf/?id=${id}`, { headers: authHeader() });
+        return axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/file/list/app/pdf/${id}`, { headers: authHeader() });
                  
     }
 

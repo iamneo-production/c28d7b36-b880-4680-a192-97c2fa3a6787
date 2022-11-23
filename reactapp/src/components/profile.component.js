@@ -5,27 +5,28 @@ class Profile extends Component {
 
   render() {
     const { user: currentUser } = this.props;
-
-    if(currentUser.roles == "ROLE_ADMIN"){
-      return (
+    if(currentUser){
+      if(currentUser.roles == "ROLE_ADMIN"){
+        return (
         <div className="container">
           <header className="jumbotron">
           <h2>Welcome ADMIN to E Driving License Platform</h2>
           <p>Click on Verification to view all Applications to verify</p>
           </header>
         </div>
-      );
-    }
-    else if(currentUser.roles == "ROLE_USER"){
-    return (
-      <div className="container">
+        );
+      }
+      else if(currentUser.roles == "ROLE_USER"){
+      return (
+        <div className="container">
         <header className="jumbotron">
         <h2>Welcome {currentUser.username} to E Driving License Platform</h2>
         <p>Click on Apply to make a new Driving License Application</p>
         <p>Click on Track to list and Track status of existing Applications</p>
         </header>
-      </div>
-    );
+        </div>
+      );
+      }
     }
     else if (!currentUser) {
       return (

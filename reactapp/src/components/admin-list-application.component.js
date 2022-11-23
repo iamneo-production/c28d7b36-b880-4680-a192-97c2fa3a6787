@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AdminApplicationCard from "./admin-application-card"
 import ApplicationService from "../services/application.service"
 import Spinner from 'react-bootstrap/Spinner';
+import AuthService from "../services/auth.service"
 
 export default class AdminListApplication extends Component {
 
@@ -17,6 +18,9 @@ export default class AdminListApplication extends Component {
             this.setState({
               applications: res.data,
             });
+          })
+          .catch(() => {
+            AuthService.logout();
           });
             
     }
@@ -28,7 +32,7 @@ export default class AdminListApplication extends Component {
             if(this.state.applications[0]){
                 //console.log(applications[0]);
                 for(let i=0;i < applications.length;i++){
-                    if(applications[i].status != "REJECTED"){
+                    if(applications[i].status == "IN PROGRESS"){
                         applicationList[j++] = applications[i];
                     }
                 }

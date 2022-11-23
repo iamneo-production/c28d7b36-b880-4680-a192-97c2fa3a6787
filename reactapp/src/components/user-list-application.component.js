@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ApplicationCard from "./application-card"
 import ApplicationService from "../services/application.service"
 import Spinner from 'react-bootstrap/Spinner';
+import AuthService from "../services/auth.service"
 
 class UserListApplication extends Component {
 
@@ -31,7 +32,10 @@ class UserListApplication extends Component {
                   flag: false,
                 });
               });
-          });    
+          })
+          .catch(() => {
+            AuthService.logout();
+          });
     }
         render(){
             let applicationElement;

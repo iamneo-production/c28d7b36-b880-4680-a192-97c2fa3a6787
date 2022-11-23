@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Item from '@material-ui/core/Grid';
 import {withRouter} from "../withRouter"
 import ApplicationService from "../services/application.service"
+import AuthService from "../services/auth.service"
 
 class Application extends Component {
     constructor(props){
@@ -19,6 +20,9 @@ class Application extends Component {
             this.setState({
               id: res.data,
             });
+          })
+          .catch(() => {
+            AuthService.logout();
           });
       }
 

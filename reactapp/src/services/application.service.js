@@ -3,7 +3,12 @@ import authHeader from "/home/coder/project/workspace/reactapp/src/services/auth
 
 class ApplicationService{
     listApplications(){
-        return axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/list`, { headers: authHeader() })
+        try {
+            let res = axios.get(`https://8080-eaefecbbedccdfdcecbdadebcceedbabdbccfcfb.examlyiopb.examly.io/api/app/list`, { headers: authHeader() });
+            return res;
+        } catch(error){
+            console.log(error.response);
+        }
     }
 
     getUserId(){
