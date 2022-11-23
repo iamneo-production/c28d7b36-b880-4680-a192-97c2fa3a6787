@@ -3,7 +3,6 @@ export default function authHeader() {
     //console.log(user);
     if (user && user.accessToken) {
       // For Spring Boot back-end
-      //console.log(user.accessToken); 
       return { Authorization: "Bearer " + user.accessToken };
     } else {
       //console.log("no ax");
